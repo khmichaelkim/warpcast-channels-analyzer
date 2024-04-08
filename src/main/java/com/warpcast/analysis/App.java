@@ -13,6 +13,7 @@ public class App {
         fetcherDao.fetchDataAndSaveToFile();
 
         analysisManager.printTopChannels(analysisManager.getTopChannelsByFollowers());
+        analysisManager.getChannelsWithMinFollowers();
 
     }
 }

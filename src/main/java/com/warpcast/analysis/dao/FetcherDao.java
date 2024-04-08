@@ -13,25 +13,37 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class FetcherDao {
 
     private static final String URL = "https://api.warpcast.com/v2/all-channels";
-    public static final String FILE_NAME = "warpcast_data_" + LocalDate.now() + ".json";
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final String BASE_DIR = "data";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final ObjectMapper mapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(FetcherDao.class);
+
+    private String getFileName() {
+        LocalDate date = LocalDate.now();
+        File dir = new File(BASE_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return BASE_DIR + File.separator + "warpcast_data_" + date.format(DATE_FORMATTER) + ".json";
+    }
 
     public void fetchDataAndSaveToFile() {
         HttpResponse<String> response = Unirest.get(URL)
                 .header("accept", "application/json")
                 .asString();
+        String fileName = getFileName();
 
         if (response.getStatus() == 200) {
-            try (FileWriter file = new FileWriter(FILE_NAME)) {
+            try (FileWriter file = new FileWriter(fileName)) {
                 file.write(response.getBody());
                 file.flush();
-                logger.info("Data saved to " + FILE_NAME);
+                logger.info("Data saved to " + fileName);
             } catch (IOException e) {
                 logger.error("Failed to save data: " + e.getMessage());
             }
@@ -41,9 +53,10 @@ public class FetcherDao {
     }
 
     public List<Channel> readData() throws IOException {
-        File file = new File(FILE_NAME);
+        String fileName = getFileName();
+        File file = new File(fileName);
         if (!file.exists()) {
-            throw new IOException("Data file does not exist: " + FILE_NAME);
+            throw new IOException("Data file does not exist: " + fileName);
         }
         try {
             JsonNode rootNode = mapper.readTree(file);
