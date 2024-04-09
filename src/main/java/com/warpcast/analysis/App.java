@@ -14,6 +14,7 @@ public class App {
 
         analysisManager.printTopChannels(analysisManager.getTopChannelsByFollowers());
         analysisManager.getChannelsWithMinFollowers();
+        analysisManager.printMostCommonWords(analysisManager.getMostCommonWords());
 
     }
 }

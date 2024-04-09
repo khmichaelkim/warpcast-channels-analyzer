@@ -6,12 +6,15 @@ import com.warpcast.analysis.dao.FetcherDao;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class AnalysisManager {
 
     private static final int TOP_CHANNEL_LIMIT = 10;
     private static final int MIN_FOLLOWER_COUNT = 25;
+    private final int TOP_WORD_LIMIT = 10;
 
     private final FetcherDao fetcherDao;
 
@@ -49,6 +52,24 @@ public class AnalysisManager {
         int count = ChannelsWithMinFollowers.getChannelCountWithMinFollowers(channels, MIN_FOLLOWER_COUNT);
         System.out.println("Number of channels with at least " + MIN_FOLLOWER_COUNT + " followers: " +
                 String.format("%.1fK", Math.round(count/100.0) / 10.0));
+    }
+
+    public Map<String, Long> getMostCommonWords() {
+        List<Channel> channels = new ArrayList<>();
+        try {
+            channels = fetcherDao.readData();
+        } catch (IOException e) {
+            System.err.println("Error fetching or analyzing data: " + e.getMessage());
+            return Collections.emptyMap();
+        }
+        CommonWordsInDescriptions analysis = new CommonWordsInDescriptions(channels);
+        return analysis.findMostCommonWords(TOP_WORD_LIMIT);
+    }
+
+    public void printMostCommonWords(Map<String, Long> commonWords) {
+        System.out.println(LocalDate.now() + " Most Common Words in Channel Descriptions: ");
+        commonWords.forEach((word, count) -> System.out.println(word + ": " + count + " times"));
+        System.out.println();
     }
 
 }
