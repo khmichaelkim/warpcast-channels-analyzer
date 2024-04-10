@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AnalysisManager {
 
@@ -33,13 +34,13 @@ public class AnalysisManager {
     }
 
     public void printTopChannels(List<Channel> topChannels) {
+        System.out.println();
         System.out.println(LocalDate.now() + " Top Channels By Follower Count: ");
         int rank = 1;
         for (Channel channel : topChannels) {
             System.out.println(rank + ". " + channel.getName() + ": " + Math.round(channel.getFollowerCount()/1000.0) + "K");
             rank++;
         }
-        System.out.println();
     }
 
     public void getChannelsWithMinFollowers() {
@@ -50,6 +51,7 @@ public class AnalysisManager {
             System.err.println("Error fetching or analyzing data: " + e.getMessage());
         }
         int count = ChannelsWithMinFollowers.getChannelCountWithMinFollowers(channels, MIN_FOLLOWER_COUNT);
+        System.out.println();
         System.out.println("Number of channels with at least " + MIN_FOLLOWER_COUNT + " followers: " +
                 String.format("%.1fK", Math.round(count/100.0) / 10.0));
     }
@@ -67,8 +69,12 @@ public class AnalysisManager {
     }
 
     public void printMostCommonWords(Map<String, Long> commonWords) {
+        System.out.println();
         System.out.println(LocalDate.now() + " Most Common Words in Channel Descriptions: ");
-        commonWords.forEach((word, count) -> System.out.println(word + ": " + count + " times"));
+        AtomicInteger rank = new AtomicInteger(1);
+        commonWords.forEach((word, count) -> {
+            System.out.println(rank.getAndIncrement() + ". " + word + ": " + count + " times");
+        });
         System.out.println();
     }
 
