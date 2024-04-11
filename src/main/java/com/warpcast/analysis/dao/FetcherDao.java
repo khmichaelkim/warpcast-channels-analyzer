@@ -19,6 +19,7 @@ import java.util.List;
 public class FetcherDao {
 
     private static final String URL = "https://api.warpcast.com/v2/all-channels";
+    private static final String POWER_BADGE_USERS_URL = "https://api.warpcast.com/v2/power-badge-users";
     private static final String BASE_DIR = "data";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final ObjectMapper mapper = new ObjectMapper();
@@ -69,6 +70,32 @@ public class FetcherDao {
         } catch (IOException e) {
             logger.error("Error reading data: ", e);
             throw e;
+        }
+    }
+
+    public int getPowerBadgeUsersCount() {
+        try {
+            HttpResponse<String> response = Unirest.get(POWER_BADGE_USERS_URL)
+                    .header("accept", "application/json")
+                    .asString();
+
+            if (response.getStatus() == 200) {
+                JsonNode rootNode = mapper.readTree(response.getBody());
+                JsonNode fidsNode = rootNode.path("result").path("fids");
+                if (!fidsNode.isMissingNode() && fidsNode.isArray()) {
+                    // If fids is an array, we can count its size.
+                    return fidsNode.size();
+                } else {
+                    logger.error("Failed to parse the power badge users data.");
+                    return 0;
+                }
+            } else {
+                logger.error("Failed to fetch power badge users data: " + response.getStatusText());
+                return 0;
+            }
+        } catch (Exception e) {
+            logger.error("Error fetching power badge users count: ", e);
+            return 0;
         }
     }
 }
