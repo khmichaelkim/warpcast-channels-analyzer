@@ -78,4 +78,9 @@ public class AnalysisManager {
         System.out.println();
     }
 
+    public void printChannelGrowth() {
+        ChannelGrowth channelGrowth = new ChannelGrowth();
+        channelGrowth.compareWeeklyGrowth();
+    }
+
 }

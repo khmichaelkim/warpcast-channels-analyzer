@@ -24,6 +24,7 @@ public class App {
         analysisManager.printTopChannels(analysisManager.getTopChannelsByFollowers());
         analysisManager.getChannelsWithMinFollowers();
         analysisManager.printMostCommonWords(analysisManager.getMostCommonWords());
-        System.out.println("Power badge users count: " + fetcherDao.getPowerBadgeUsersCount());
+        System.out.println("Power badge users count: " + fetcherDao.getPowerBadgeUsersCount() + '\n');
+        analysisManager.printChannelGrowth();
     }
 }
