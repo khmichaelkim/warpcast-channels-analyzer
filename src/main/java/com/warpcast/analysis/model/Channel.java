@@ -17,6 +17,7 @@ public class Channel {
     private String description;
     private String imageUrl;
     private String leadFid;
+    private String moderatorFid;
     private List<String> hostFids;
     private long createdAt;
     private int followerCount;
@@ -32,6 +33,7 @@ public class Channel {
             @JsonProperty("description") String description,
             @JsonProperty("imageUrl") String imageUrl,
             @JsonProperty("leadFid") String leadFid,
+            @JsonProperty("moderatorFid") String moderatorFid,
             @JsonProperty("hostFids") List<String> hostFids,
             @JsonProperty("createdAt") long createdAt,
             @JsonProperty("followerCount") int followerCount
@@ -42,6 +44,7 @@ public class Channel {
         this.description = description;
         this.imageUrl = imageUrl;
         this.leadFid = leadFid;
+        this.moderatorFid = moderatorFid;
         this.hostFids = hostFids;
         this.createdAt = createdAt;
         this.followerCount = followerCount;
@@ -93,6 +96,14 @@ public class Channel {
 
     public void setLeadFid(String leadFid) {
         this.leadFid = leadFid;
+    }
+
+    public String getModeratorFid() {
+        return moderatorFid;
+    }
+
+    public void setModeratorFid(String moderatorFid) {
+        this.moderatorFid = moderatorFid;
     }
 
     public List<String> getHostFids() {
